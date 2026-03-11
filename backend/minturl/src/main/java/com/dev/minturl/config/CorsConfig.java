@@ -1,6 +1,5 @@
 package com.dev.minturl.config;
 
-import org.jspecify.annotations.NonNull;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
@@ -15,16 +14,11 @@ public class CorsConfig {
         return new WebMvcConfigurer() {
 
             @Override
-            public void addCorsMappings(@NonNull CorsRegistry registry) {
-
-                registry.addMapping("/**")
-                        .allowedOriginPatterns(
-                                "https://mint-url.vercel.app",
-                                "http://localhost:*"
-                        )
+            public void addCorsMappings(CorsRegistry registry) {
+                registry.addMapping("/api/**")
+                        .allowedOrigins("https://mint-url.vercel.app")
                         .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                         .allowedHeaders("*")
-                        .allowCredentials(false)
                         .maxAge(3600);
             }
         };

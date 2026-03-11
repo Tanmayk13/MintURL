@@ -16,7 +16,11 @@ public class CorsConfig {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/api/**")
-                        .allowedOrigins("https://mint-url.vercel.app")
+                        .allowedOrigins(
+                                "https://mint-url.vercel.app",
+                                "http://localhost:5173",
+                                "http://localhost:4173"
+                        )
                         .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                         .allowedHeaders("*")
                         .maxAge(3600);

@@ -19,23 +19,33 @@ public class UrlCacheService {
     }
 
     public String get(String shortCode) {
-        return redisTemplate.opsForValue().get(CACHE_URL_PREFIX + shortCode);
+        try {
+            return redisTemplate.opsForValue().get(CACHE_URL_PREFIX + shortCode);
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     public void put(String shortCode, String originalUrl, LocalDateTime expiryAt) {
-        long ttl = DEFAULT_CACHE_TTL;
+        try {
+            long ttl = DEFAULT_CACHE_TTL;
 
-        if (expiryAt != null) {
-            ttl = Duration.between(
-                    LocalDateTime.now(),
-                    expiryAt
-            ).getSeconds();
+            if (expiryAt != null) {
+                ttl = Duration.between(
+                        LocalDateTime.now(),
+                        expiryAt
+                ).getSeconds();
 
-            if (ttl <= 0) {
-                return;
+                if (ttl <= 0) {
+                    return;
+                }
             }
-        }
 
-        redisTemplate.opsForValue().set(CACHE_URL_PREFIX + shortCode, originalUrl, ttl, TimeUnit.SECONDS);
+            redisTemplate.opsForValue()
+                    .set(CACHE_URL_PREFIX + shortCode, originalUrl, ttl, TimeUnit.SECONDS);
+
+        } catch (Exception e) {
+            // Redis unavailable → skip caching
+        }
     }
 }

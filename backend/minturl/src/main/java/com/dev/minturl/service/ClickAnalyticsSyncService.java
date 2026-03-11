@@ -11,6 +11,7 @@ import java.util.Map;
 
 @Service
 public class ClickAnalyticsSyncService {
+
     private static final String CLICK_HASH = "click_counts";
     private static final Logger log = LoggerFactory.getLogger(ClickAnalyticsSyncService.class);
 
@@ -27,27 +28,33 @@ public class ClickAnalyticsSyncService {
 
         log.info("Scheduler triggered");
 
-        Map<Object, Object> clickMap =
-                redisTemplate.opsForHash().entries(CLICK_HASH);
+        try {
 
-        if (clickMap.isEmpty()) {
-            log.debug("No click analytics to sync");
-            return;
-        }
+            Map<Object, Object> clickMap =
+                    redisTemplate.opsForHash().entries(CLICK_HASH);
 
-        log.info("Syncing {} analytics entries", clickMap.size());
+            if (clickMap == null || clickMap.isEmpty()) {
+                log.debug("No click analytics to sync");
+                return;
+            }
 
-        for (Map.Entry<Object, Object> entry : clickMap.entrySet()) {
+            log.info("Syncing {} analytics entries", clickMap.size());
 
-            String shortCode = entry.getKey().toString();
-            long count = Long.parseLong(entry.getValue().toString());
+            for (Map.Entry<Object, Object> entry : clickMap.entrySet()) {
 
-            urlRepository.findByShortCode(shortCode).ifPresent(mapping -> {
-                mapping.setClickCount(mapping.getClickCount() + count);
-                urlRepository.save(mapping);
-            });
+                String shortCode = entry.getKey().toString();
+                long count = Long.parseLong(entry.getValue().toString());
 
-            redisTemplate.opsForHash().delete(CLICK_HASH, shortCode);
+                urlRepository.findByShortCode(shortCode).ifPresent(mapping -> {
+                    mapping.setClickCount(mapping.getClickCount() + count);
+                    urlRepository.save(mapping);
+                });
+
+                redisTemplate.opsForHash().delete(CLICK_HASH, shortCode);
+            }
+
+        } catch (Exception e) {
+            log.warn("Redis unavailable, skipping analytics sync");
         }
     }
 }

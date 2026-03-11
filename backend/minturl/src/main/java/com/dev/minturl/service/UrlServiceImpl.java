@@ -26,7 +26,12 @@ public class UrlServiceImpl implements UrlService {
     private final SequenceGeneratorService generatorService;
     private final StringRedisTemplate redisTemplate;
 
-    public UrlServiceImpl(UrlRepository urlRepository, UrlCacheService cacheService, SequenceGeneratorService generatorService, StringRedisTemplate redisTemplate) {
+    public UrlServiceImpl(
+            UrlRepository urlRepository,
+            UrlCacheService cacheService,
+            SequenceGeneratorService generatorService,
+            StringRedisTemplate redisTemplate
+    ) {
         this.urlRepository = urlRepository;
         this.cacheService = cacheService;
         this.generatorService = generatorService;
@@ -70,31 +75,38 @@ public class UrlServiceImpl implements UrlService {
 
     @Override
     public String getOriginalUrl(String shortCode) {
+
         String cachedUrl = cacheService.get(shortCode);
 
         if (cachedUrl != null) {
 
-            Long count = redisTemplate
-                    .opsForHash()
-                    .increment("click_counts", shortCode, 1L);
+            try {
+                Long count = redisTemplate
+                        .opsForHash()
+                        .increment(CLICK_COUNTS_PREFIX, shortCode, 1L);
+
+                log.info("Redis click count for {} = {}", shortCode, count);
+            } catch (Exception e) {
+                log.warn("Redis unavailable for click counting");
+            }
 
             log.info("Cache HIT for shortCode: {}", shortCode);
-            log.info("Redis click count for {} = {}", shortCode, count);
-
             return cachedUrl;
         }
 
-        UrlMapping mapping = urlRepository.findByShortCode(shortCode).orElseThrow(
-                () -> new ShortUrlNotFoundException("Short URL not found")
-        );
+        UrlMapping mapping = urlRepository.findByShortCode(shortCode)
+                .orElseThrow(() -> new ShortUrlNotFoundException("Short URL not found"));
 
-        if (mapping.getExpiryAt() != null && mapping.getExpiryAt().isBefore(LocalDateTime.now())) {
+        if (mapping.getExpiryAt() != null &&
+                mapping.getExpiryAt().isBefore(LocalDateTime.now())) {
             throw new UrlExpiredException("URL expired");
         }
 
         mapping.setClickCount(mapping.getClickCount() + 1);
         urlRepository.save(mapping);
+
         cacheService.put(shortCode, mapping.getOriginalUrl(), mapping.getExpiryAt());
+
         log.info("Cache MISS for shortCode: {}", shortCode);
 
         return mapping.getOriginalUrl();
@@ -106,10 +118,19 @@ public class UrlServiceImpl implements UrlService {
         UrlMapping mapping = urlRepository.findByShortCode(shortCode)
                 .orElseThrow(() -> new ShortUrlNotFoundException("Short URL not found"));
 
-        long redisClicks = redisTemplate.opsForHash()
-                .get(CLICK_COUNTS_PREFIX, shortCode) != null
-                ? Long.parseLong(redisTemplate.opsForHash().get(CLICK_COUNTS_PREFIX, shortCode).toString())
-                : 0L;
+        long redisClicks = 0;
+
+        try {
+            Object val = redisTemplate.opsForHash()
+                    .get(CLICK_COUNTS_PREFIX, shortCode);
+
+            if (val != null) {
+                redisClicks = Long.parseLong(val.toString());
+            }
+
+        } catch (Exception e) {
+            log.warn("Redis unavailable for stats");
+        }
 
         long totalClicks = mapping.getClickCount() + redisClicks;
 

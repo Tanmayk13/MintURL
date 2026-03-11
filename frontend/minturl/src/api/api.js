@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL || 'https://minturl-backend.onrender.com/api',
+  baseURL: import.meta.env.VITE_API_BASE_URL || 'https://minturl.onrender.com/api',
   headers: {
     'Content-Type': 'application/json',
   },

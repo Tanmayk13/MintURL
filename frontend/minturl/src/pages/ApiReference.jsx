@@ -170,7 +170,7 @@ export default function ApiReference() {
           <h1 className="font-display text-4xl font-800 text-slate-900 mb-3">REST API</h1>
           <p className="text-base text-slate-400 font-sans font-light max-w-xl leading-relaxed">
             Full reference for all MintURL API endpoints. Base URL:{' '}
-            <code className="font-mono text-blue-600 bg-blue-50 px-1.5 py-0.5 rounded text-sm">https://minturl-backend.onrender.com/api</code>
+            <code className="font-mono text-blue-600 bg-blue-50 px-1.5 py-0.5 rounded text-sm">https://minturl.onrender.com/api</code>
           </p>
 
           {/* Meta badges */}
@@ -225,7 +225,7 @@ export default function ApiReference() {
   "expiryDays": 7
 }`}
               responseExample={`{
-  "shortUrl": "https://minturl-backend.onrender.com/abc123"
+  "shortUrl": "https://minturl.onrender.com/abc123"
 }`}
               notes="The short code is auto-generated. The shortUrl field contains the full redirect URL ready to share."
             />

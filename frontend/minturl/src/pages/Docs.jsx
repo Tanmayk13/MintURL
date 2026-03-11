@@ -79,7 +79,7 @@ export default function Docs() {
             <Section id="overview" title="Overview">
               <div className="prose-slate text-slate-600 font-sans text-sm leading-7 space-y-3">
                 <p>
-                  <strong className="text-slate-800">MintURL</strong> is a lightweight, self-hosted URL shortener with a clean REST API. It lets you create compact links, set expiry windows, and track click-through analytics — all from a single backend service running on <code className="font-mono text-blue-600 bg-blue-50 px-1 py-0.5 rounded text-xs">https://minturl-backend.onrender.com</code>.
+                  <strong className="text-slate-800">MintURL</strong> is a lightweight, self-hosted URL shortener with a clean REST API. It lets you create compact links, set expiry windows, and track click-through analytics — all from a single backend service running on <code className="font-mono text-blue-600 bg-blue-50 px-1 py-0.5 rounded text-xs">https://minturl.onrender.com</code>.
                 </p>
                 <p>
                   This frontend is a React + Vite application that communicates with that backend. No external services, no third-party trackers — just clean, fast redirects.
@@ -134,7 +134,7 @@ npm run preview`}</CodeBlock>
                 <div className="p-5 space-y-3">
                   {[
                     { step: 'Input', value: 'https://very-long-domain.com/with/a/deeply/nested/path?query=param' },
-                    { step: 'Output', value: 'https://minturl-backend.onrender.com/abc123' },
+                    { step: 'Output', value: 'https://minturl.onrender.com/abc123' },
                     { step: 'Redirect', value: 'Clicking the short link opens the original URL' },
                   ].map((row) => (
                     <div key={row.step} className="flex items-start gap-3 text-sm">
@@ -186,7 +186,7 @@ npm run preview`}</CodeBlock>
                   },
                   {
                     q: 'How do I change the backend URL?',
-                    a: 'Edit the baseURL value in src/api/api.js from https://minturl-backend.onrender.com/api to your backend\'s address.',
+                    a: 'Edit the baseURL value in src/api/api.js from https://minturl.onrender.com/api to your backend\'s address.',
                   },
                 ].map((item) => (
                   <details key={item.q} className="group rounded-xl border border-slate-100 overflow-hidden">

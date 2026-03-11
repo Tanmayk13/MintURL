@@ -2,14 +2,18 @@ spring:
   application:
     name: minturl
 
-    mongodb:
-      uri: ${MONGO_URI}
+  mongodb:
+    uri: ${MONGO_URI}
 
+  data:
     redis:
       host: ${REDIS_HOST}
       port: ${REDIS_PORT}
       password: ${REDIS_PASSWORD}
       database: 0
+
+server:
+  port: ${PORT:8080}
 
 analytics:
   sync:

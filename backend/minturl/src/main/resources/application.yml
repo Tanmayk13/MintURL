@@ -11,10 +11,8 @@ spring:
       port: ${REDIS_PORT}
       password: ${REDIS_PASSWORD}
       database: 0
-      ssl: true
-
-server:
-  port: ${PORT:8080}
+      ssl:
+        enabled: true
 
 
 analytics:

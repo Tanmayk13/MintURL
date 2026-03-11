@@ -212,7 +212,7 @@ export default function StatsCard() {
             type="text"
             value={input}
             onChange={(e) => setInput(e.target.value)}
-            placeholder="abc123 or http://localhost:8080/abc123"
+            placeholder="abc123 or https://minturl-backend.onrender.com/abc123"
             required
             className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 text-slate-800 placeholder-slate-300
                        text-sm font-sans focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400
